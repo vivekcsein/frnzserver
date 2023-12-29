@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+create a folder( name = nodeserver)
 
-## Getting Started
+//create package.json
+pnpm init
 
-First, run the development server:
+//and make type
+"type": "module",
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+//initialise typescript
+npm i -g typescript
+pnpm tsc --init
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+changes:-
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+{
+"compilerOptions": {
+"target": "ES2020",
+"module": "NodeNext",
+"moduleResolution": "NodeNext",
+"rootDir": "./src",  
+ "outDir": "./dist",
+"strict": true,  
+ }
+}
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+or
+//create vanilla ts with vite
+and delete all the files
+except packagae.json & tsconfg.json
+and remove vite from dependency
 
-## Learn More
+//create src folder & file name index.ts or frnzserver.ts
 
-To learn more about Next.js, take a look at the following resources:
+// now install dependency
+pnpm add express dotenv cors
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+// now add developer dependency
+pnpm add --save-dev @types/express @types/node @types/cors
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+pnpm add --save-dev typescript nodemon rimraf concurrently
 
-## Deploy on Vercel
+// now your script in package.json will be
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    "build": "rimraf dist && pnpm tsc",
+    "prestart": "pnpm build",
+    "start": "node ./dist/app.js",
+    "watch": "pnpm tsc -w",
+    "serve": "nodemon ./dist/app.js",
+    "dev": "concurrently \"pnpm tsc -w\"  \"nodemon ./dist/app.js\"",
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+//express app run server
+
+import express, { Express, Response } from "express";
+import \* as dotenv from "dotenv";
+import cors from "cors";
+dotenv.config();
+
+if (!process.env.SERVER_PORT) {
+process.exit(1);
+}
+const PORT: number = parseInt(process.env.SERVER_PORT as string, 10) | 7164;
+
+const app: Express = express();
+app.use(cors());
+app.use(express.json());
+
+//API route
+app.get('/', (req, res: Response) => {
+res.send('Hello From Server');
+});
+
+// start server
+const startserver = async () => {
+try {
+await new Promise((resolve, reject) => {
+const server = app.listen(PORT, () => {
+console.log(`Server running on http://localhost:${PORT}`);
+resolve("server started");
+});
+server.on('error', (error) => {
+reject(error);
+});
+});
+} catch (error) {
+console.error("Server can not start: ", error);
+process.exit(1);
+}
+}
+
+startserver();
