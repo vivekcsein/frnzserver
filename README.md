@@ -1,45 +1,68 @@
-create a folder( name = nodeserver)
+<p>
+create a folder( name = nodeserver
+</p>
 
+<p>
 //create package.json
-pnpm init
-
+</p>
+       
+       pnpm init
+<p>
 //and make type
-"type": "module",
+</p>
 
-//initialise typescript
-npm i -g typescript
-pnpm tsc --init
+       "type": "module",
+<p>
+//initialize typescript
+</p>
 
-changes:-
+     npm i -g typescript
+     pnpm tsc --init
+<p>
+changes commit to tsconfig.json:-
+</p>
 
-{
-"compilerOptions": {
-"target": "ES2020",
-"module": "NodeNext",
-"moduleResolution": "NodeNext",
-"rootDir": "./src",  
- "outDir": "./dist",
-"strict": true,  
- }
-}
+    {
+     "compilerOptions": {
+     "target": "ES2020",
+     "module": "NodeNext",
+     "moduleResolution": "NodeNext",
+     "rootDir": "./src",  
+     "outDir": "./dist",
+     "strict": true,  
+      }
+    }
 
-or
-//create vanilla ts with vite
-and delete all the files
-except packagae.json & tsconfg.json
-and remove vite from dependency
+<p>
+create .gitignore
+</p>
 
-//create src folder & file name index.ts or frnzserver.ts
-
+    /node_modules
+    /dist/
+    /build
+    .env
+    npm-debug.log*
+    yarn-debug.log*
+    yarn-error.log*
+  
+<p>
+//create src folder & file name app.ts or frnzserver.ts
+</p>
+<p>
 // now install dependency
-pnpm add express dotenv cors
+</p>
 
+    pnpm add express dotenv cors
+<p>
 // now add developer dependency
-pnpm add --save-dev @types/express @types/node @types/cors
+</p>
 
-pnpm add --save-dev typescript nodemon rimraf concurrently
+    pnpm add --save-dev @types/express @types/node @types/cors
+    pnpm add --save-dev typescript nodemon rimraf concurrently
 
+<p>
 // now your script in package.json will be
+</p>
 
     "build": "rimraf dist && pnpm tsc",
     "prestart": "pnpm build",
@@ -50,41 +73,38 @@ pnpm add --save-dev typescript nodemon rimraf concurrently
 
 //express app run server
 
-import express, { Express, Response } from "express";
-import \* as dotenv from "dotenv";
-import cors from "cors";
-dotenv.config();
+    import express, { Express, Response } from "express";
+    import \* as dotenv from "dotenv";
+    import cors from "cors";
+    dotenv.config();
 
-if (!process.env.SERVER_PORT) {
-process.exit(1);
-}
-const PORT: number = parseInt(process.env.SERVER_PORT as string, 10) | 7164;
+    if (!process.env.SERVER_PORT) {
+    process.exit(1);
+    }
+    const PORT: number = parseInt(process.env.SERVER_PORT as string, 10) | 7164;
+    const app: Express = express();
+    app.use(cors());
+    app.use(express.json());
 
-const app: Express = express();
-app.use(cors());
-app.use(express.json());
-
-//API route
-app.get('/', (req, res: Response) => {
-res.send('Hello From Server');
-});
-
-// start server
-const startserver = async () => {
-try {
-await new Promise((resolve, reject) => {
-const server = app.listen(PORT, () => {
-console.log(`Server running on http://localhost:${PORT}`);
-resolve("server started");
-});
-server.on('error', (error) => {
-reject(error);
-});
-});
-} catch (error) {
-console.error("Server can not start: ", error);
-process.exit(1);
-}
-}
-
-startserver();
+    //API route
+    app.get('/', (req, res: Response) => {
+    res.send('Hello From Server');
+    });
+    // start server
+    const startserver = async () => {
+    try {
+    await new Promise((resolve, reject) => {
+    const server = app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    resolve("server started");
+    });
+    server.on('error', (error) => {
+    reject(error);
+    });
+    });
+    } catch (error) {
+    console.error("Server can not start: ", error);
+    process.exit(1);
+      }
+    }
+    startserver();
